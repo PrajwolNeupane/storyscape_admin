@@ -46,6 +46,7 @@ const themeConfig = {
         bold: "700"
     },
     fontSizes: {
+        xxxxl:"50px",
         xxxl:"45px",
         xxl:"40px",
         xl: "35px",
