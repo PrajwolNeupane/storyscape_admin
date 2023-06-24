@@ -2,7 +2,7 @@ import { Avatar, Button, HStack, Heading, VStack, Text, Box, Table, Td, Th, Tr }
 import { FC } from "react";
 import { Link } from "react-router-dom";
 import { deleteTokenCookie } from "../helper/cookiee";
-import { useAppDispatch } from "../app/store";
+import { useAppDispatch, useAppSelector } from "../app/store";
 import { setToken } from "../app/reducer/tokenReducer";
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
 let Dashboard: FC<Props> = ({ }) => {
 
     const dispatch = useAppDispatch();
+    const {auth} = useAppSelector((state) => state.Auth);
 
     const data = [
         {
@@ -59,10 +60,10 @@ let Dashboard: FC<Props> = ({ }) => {
     return (
         <VStack bgColor={'dark.600'} p={"40px 5%"} alignItems={"flex-start"} gap={"40px"}>
             <HStack gap={"60px"} justifyContent={"flex-start"}>
-                <Avatar src="https://robohash.org/Prajwol%20Neupane0" bgColor={"text.200"} width={"180px"} height={"180px"} />
+                <Avatar src={auth?.photoURL} bgColor={"text.200"} width={"180px"} height={"180px"} />
                 <VStack alignItems={"start"}>
-                    <Heading fontWeight={"semibold"} fontSize={"sm"} color={"text.300"}>Prajwol Neupane</Heading>
-                    <Heading fontWeight={"medium"} fontSize={"xs"} color={"text.300"}>prajwolneupane68@gmail.com</Heading>
+                    <Heading fontWeight={"semibold"} fontSize={"sm"} color={"text.300"}>{auth?.name}</Heading>
+                    <Heading fontWeight={"medium"} fontSize={"xs"} color={"text.300"}>{auth?.email}</Heading>
                     <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"text.300"} _hover={{ bgColor: "text.200" }} onClick={() => {
                         deleteTokenCookie();
                         dispatch(setToken(null));

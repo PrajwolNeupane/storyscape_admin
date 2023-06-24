@@ -1,6 +1,6 @@
 import { Button, Input, Heading, VStack, Text, useToast } from "@chakra-ui/react";
 import { FC } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { loginDataInterface, loginSchema } from '../Interface/formSchema.ts';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -8,6 +8,7 @@ import { useLoginMutation } from "../Features/auth/logInSlice.ts";
 import { setTokenCookie } from "../helper/cookiee.ts";
 import { useAppDispatch } from "../app/store.ts";
 import { setToken } from "../app/reducer/tokenReducer.ts";
+import { Oval } from 'react-loader-spinner';
 
 
 interface Props {
@@ -19,6 +20,7 @@ let LogInPage: FC<Props> = ({ }) => {
     const [login, { isLoading }] = useLoginMutation();
     const toast = useToast();
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     const { register, formState: { errors }, handleSubmit } = useForm<loginDataInterface>({
         resolver: yupResolver(loginSchema)
@@ -38,6 +40,7 @@ let LogInPage: FC<Props> = ({ }) => {
             });
             setTokenCookie(res.token);
             dispatch(setToken(res.token));
+            navigate("/");
         } else if (res.message) {
             toast({
                 title: "Log in failed",
@@ -80,7 +83,17 @@ let LogInPage: FC<Props> = ({ }) => {
                 {
                     !isLoading ? <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} type='submit'>
                         Log In
-                    </Button> : <Text>Loading</Text>
+                    </Button> : <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} type='submit'>
+                        Log In
+                        <Oval height="30"
+                            width="30"
+                            color='#262425'
+                            secondaryColor="#363435"
+                            wrapperStyle={{marginLeft:"5px"}}
+                            strokeWidth={3}
+                            ariaLabel="three-dots-loading"
+                            visible={true} />
+                    </Button>
                 }
                 <Text m={'0px auto'} color={"text.400"} fontSize={"xxs"}>
                     Don't have an account ?

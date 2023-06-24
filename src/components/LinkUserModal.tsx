@@ -7,6 +7,8 @@ import { setTokenCookie } from "../helper/cookiee.ts";
 import { useLinkUserMutation } from '../Features/auth/linkUserSlice.ts';
 import { setToken } from '../app/reducer/tokenReducer.ts';
 import { useAppDispatch } from '../app/store.ts';
+import { useNavigate } from 'react-router-dom';
+import { Oval } from 'react-loader-spinner';
 
 interface Props {
     isOpen: boolean,
@@ -18,6 +20,7 @@ let LinkUserModal: FC<Props> = ({ isOpen, onClose }) => {
     const [linkUser, { isLoading }] = useLinkUserMutation();
     const toast = useToast();
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     const { register, formState: { errors }, handleSubmit } = useForm<loginDataInterface>({
         resolver: yupResolver(loginSchema)
@@ -37,6 +40,7 @@ let LinkUserModal: FC<Props> = ({ isOpen, onClose }) => {
             });
             setTokenCookie(res.token);
             dispatch(setToken(res.token));
+            navigate("/")
         } else if (res.message) {
             toast({
                 title: "Log in failed",
@@ -77,9 +81,21 @@ let LinkUserModal: FC<Props> = ({ isOpen, onClose }) => {
                         <Input placeholder="*********" _placeholder={{ color: "text.300", fontWeight: "regular", fontSize: "xs" }} fontWeight={"regular"} fontSize={"xs"} color={"text.300"} w={"100%"} type="password" {...register('password', { required: true })} />
                         <Text fontSize={"xxs"} fontWeight={"regular"} color={"error.500"}>{errors.password == null ? "" : errors.password.message}</Text>
                     </VStack>
-                    <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} type='submit' mb={"10px"}>
-                        Link User
-                    </Button>
+                    {
+                        isLoading ? <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} type='submit' mb={"10px"}>
+                            Link User
+                        </Button> : <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} type='submit' mb={"10px"}>
+                            Link User
+                            <Oval height="30"
+                                width="30"
+                                color='#262425'
+                                secondaryColor="#363435"
+                                wrapperStyle={{ marginLeft: "5px" }}
+                                strokeWidth={3}
+                                ariaLabel="three-dots-loading"
+                                visible={true} />
+                        </Button>
+                    }
                 </ModalBody>
             </ModalContent>
         </Modal>

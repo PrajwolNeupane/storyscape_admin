@@ -1,6 +1,6 @@
-import { Button, Input, Heading, VStack, Text, useToast ,useDisclosure} from "@chakra-ui/react";
+import { Button, Input, Heading, VStack, Text, useToast, useDisclosure } from "@chakra-ui/react";
 import { FC } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { signupDataInterface, signupSchema } from '../Interface/formSchema.ts';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -9,6 +9,7 @@ import { setTokenCookie } from "../helper/cookiee.ts";
 import LinkUserModal from "../components/LinkUserModal.tsx";
 import { useAppDispatch } from "../app/store.ts";
 import { setToken } from "../app/reducer/tokenReducer.ts";
+import { Oval } from 'react-loader-spinner';
 
 
 interface Props {
@@ -21,6 +22,7 @@ let SignUpPage: FC<Props> = ({ }) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const toast = useToast();
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     const { register, formState: { errors }, handleSubmit } = useForm<signupDataInterface>({
         resolver: yupResolver(signupSchema)
@@ -40,6 +42,7 @@ let SignUpPage: FC<Props> = ({ }) => {
             });
             setTokenCookie(res.token);
             dispatch(setToken(res.token));
+            navigate("/")
         } else if (res.message) {
             toast({
                 title: "Sign Up failed",
@@ -91,10 +94,20 @@ let SignUpPage: FC<Props> = ({ }) => {
                 </VStack>
                 {
                     !isLoading ? <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} type='submit'>
-                        Log In
-                    </Button> : <Text>Loading</Text>
+                        Sign Up
+                    </Button> : <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} type='submit'>
+                        Sign Up
+                        <Oval height="30"
+                            width="30"
+                            color='#262425'
+                            secondaryColor="#363435"
+                            wrapperStyle={{ marginLeft: "5px" }}
+                            strokeWidth={3}
+                            ariaLabel="three-dots-loading"
+                            visible={true} />
+                    </Button>
                 }
-                <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} bgColor={"brand.500"} _hover={{bgColor:"brand.700"}} onClick={onOpen}>
+                <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} bgColor={"brand.500"} _hover={{ bgColor: "brand.700" }} onClick={onOpen}>
                     Link Storyscape Account
                 </Button>
                 <Text m={'0px auto'} color={"text.400"} fontSize={"xxs"}>
@@ -104,7 +117,7 @@ let SignUpPage: FC<Props> = ({ }) => {
                 </Text>
             </VStack>
         </VStack>
-        <LinkUserModal isOpen={isOpen} onClose={onClose}/>
+            <LinkUserModal isOpen={isOpen} onClose={onClose} />
         </>
     )
 }

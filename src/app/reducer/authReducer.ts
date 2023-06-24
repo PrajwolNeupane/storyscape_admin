@@ -6,7 +6,7 @@ type InitialState = {
     email: string;
     isCreater: boolean;
     name: string;
-    photoURL: String;
+    photoURL: string;
   } | null;
 };
 
