@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { deleteTokenCookie } from "../helper/cookiee";
 import { useAppDispatch, useAppSelector } from "../app/store";
 import { setToken } from "../app/reducer/tokenReducer";
+import { setAuth } from "../app/reducer/authReducer";
 
 interface Props {
 
@@ -67,6 +68,7 @@ let Dashboard: FC<Props> = ({ }) => {
                     <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"text.300"} _hover={{ bgColor: "text.200" }} onClick={() => {
                         deleteTokenCookie();
                         dispatch(setToken(null));
+                        dispatch(setAuth(null));
                     }}>Log Out</Button>
                 </VStack>
             </HStack>

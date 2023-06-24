@@ -14,7 +14,10 @@ import {
 } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons'
 import { Link } from "react-router-dom";
-import { useAppSelector } from "../app/store";
+import { useAppDispatch, useAppSelector } from "../app/store";
+import { deleteTokenCookie } from "../helper/cookiee";
+import { setToken } from "../app/reducer/tokenReducer";
+import { setAuth } from "../app/reducer/authReducer";
 
 
 interface Props {
@@ -24,7 +27,8 @@ interface Props {
 let SideDrawer: FC<Props> = ({ }) => {
 
     const { isOpen, onOpen, onClose } = useDisclosure()
-    const {auth} = useAppSelector((state)=>state.Auth);
+    const { auth } = useAppSelector((state) => state.Auth);
+    const dispatch = useAppDispatch();
 
 
     return (
@@ -40,7 +44,7 @@ let SideDrawer: FC<Props> = ({ }) => {
                 <DrawerOverlay />
                 <DrawerContent bgColor={'dark.800'} pt={"20px"}>
                     <DrawerHeader as={HStack} justifyContent={"center"}>
-                        <Avatar src={auth?.photoURL}/>
+                        <Avatar src={auth?.photoURL} />
                         <VStack alignItems={'flex-start'} color={"text.200"}>
                             <Heading fontSize={"sm"} fontWeight={"semibold"}>{auth?.name}</Heading>
                             <Heading fontSize={"xxs"} fontWeight={"regular"}>{auth?.email}</Heading>
@@ -53,7 +57,11 @@ let SideDrawer: FC<Props> = ({ }) => {
                         <Divider borderColor={"text.500"} />
                         <Heading fontSize={"sm"} fontWeight={"semibold"} color={"text.300"}>Add Blog</Heading>
                         <Divider borderColor={"text.500"} />
-                        <Heading fontSize={"sm"} fontWeight={"semibold"} color={"text.300"}>Log Out</Heading>
+                        <Heading fontSize={"sm"} fontWeight={"semibold"} cursor={"pointer"} color={"text.300"} onClick={() => {
+                            deleteTokenCookie();
+                            dispatch(setToken(null));
+                            dispatch(setAuth(null));
+                        }}>Log Out</Heading>
                     </DrawerBody>
                 </DrawerContent>
             </Drawer>

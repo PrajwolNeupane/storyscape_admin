@@ -1,14 +1,15 @@
 import { Button, Input, Heading, VStack, Text, useToast } from "@chakra-ui/react";
 import { FC } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { loginDataInterface, loginSchema } from '../Interface/formSchema.ts';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useLoginMutation } from "../Features/auth/logInSlice.ts";
 import { setTokenCookie } from "../helper/cookiee.ts";
-import { useAppDispatch } from "../app/store.ts";
+import { useAppDispatch, useAppSelector } from "../app/store.ts";
 import { setToken } from "../app/reducer/tokenReducer.ts";
 import { Oval } from 'react-loader-spinner';
+import Loading from "../components/Loading.tsx";
 
 
 interface Props {
@@ -21,6 +22,7 @@ let LogInPage: FC<Props> = ({ }) => {
     const toast = useToast();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const { token, loading } = useAppSelector((state) => state.Token);
 
     const { register, formState: { errors }, handleSubmit } = useForm<loginDataInterface>({
         resolver: yupResolver(loginSchema)
@@ -64,44 +66,49 @@ let LogInPage: FC<Props> = ({ }) => {
         }
     })
 
+    if (loading) {
+        return <Loading open={loading} />
+    }
 
     return (
-        <> <VStack height={"100vh"} bgColor={"dark.600"} justifyContent={"center"}>
-            <VStack bgColor={"dark.800"} width={"450px"} padding={"30px 25px"} alignItems={'flex-start'} rounded={"md"} as={'form'} onSubmit={onSubmit}>
-                <Heading color={"text.300"} fontWeight={"semibold"} fontSize={"xxl"}>Log in</Heading>
-                <Heading color={"text.300"} fontWeight={"medium"} fontSize={"sm"}>As a creater</Heading>
-                <VStack alignItems={"flex-start"} w={"100%"} m={"10px 0px"}>
-                    <Heading color={"text.200"} fontWeight={"regular"} fontSize={"xxs"}>Creater Email :</Heading>
-                    <Input placeholder="creater@gmail.com" _placeholder={{ color: "text.300", fontWeight: "regular", fontSize: "xs" }} fontWeight={"regular"} fontSize={"xs"} color={"text.300"} w={"100%"} type="text" {...register('email', { required: true })} />
-                    <Text fontSize={"xxs"} fontWeight={"regular"} color={"error.500"}>{errors.email == null ? "" : errors.email.message}</Text>
+        <> {
+            token == null ? <VStack height={"100vh"} bgColor={"dark.600"} justifyContent={"center"}>
+                <VStack bgColor={"dark.800"} width={"450px"} padding={"30px 25px"} alignItems={'flex-start'} rounded={"md"} as={'form'} onSubmit={onSubmit}>
+                    <Heading color={"text.300"} fontWeight={"semibold"} fontSize={"xxl"}>Log in</Heading>
+                    <Heading color={"text.300"} fontWeight={"medium"} fontSize={"sm"}>As a creater</Heading>
+                    <VStack alignItems={"flex-start"} w={"100%"} m={"10px 0px"}>
+                        <Heading color={"text.200"} fontWeight={"regular"} fontSize={"xxs"}>Creater Email :</Heading>
+                        <Input placeholder="creater@gmail.com" _placeholder={{ color: "text.300", fontWeight: "regular", fontSize: "xs" }} fontWeight={"regular"} fontSize={"xs"} color={"text.300"} w={"100%"} type="text" {...register('email', { required: true })} />
+                        <Text fontSize={"xxs"} fontWeight={"regular"} color={"error.500"}>{errors.email == null ? "" : errors.email.message}</Text>
+                    </VStack>
+                    <VStack alignItems={"flex-start"} w={"100%"} m={"10px 0px"}>
+                        <Heading color={"text.200"} fontWeight={"regular"} fontSize={"xxs"}>Creater Password :</Heading>
+                        <Input placeholder="*********" _placeholder={{ color: "text.300", fontWeight: "regular", fontSize: "xs" }} fontWeight={"regular"} fontSize={"xs"} color={"text.300"} w={"100%"} type="password" {...register('password', { required: true })} />
+                        <Text fontSize={"xxs"} fontWeight={"regular"} color={"error.500"}>{errors.password == null ? "" : errors.password.message}</Text>
+                    </VStack>
+                    {
+                        !isLoading ? <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} type='submit'>
+                            Log In
+                        </Button> : <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} type='submit'>
+                            Log In
+                            <Oval height="30"
+                                width="30"
+                                color='#262425'
+                                secondaryColor="#363435"
+                                wrapperStyle={{ marginLeft: "5px" }}
+                                strokeWidth={3}
+                                ariaLabel="three-dots-loading"
+                                visible={true} />
+                        </Button>
+                    }
+                    <Text m={'0px auto'} color={"text.400"} fontSize={"xxs"}>
+                        Don't have an account ?
+                        <Link to={"/sign-up"}>
+                            <Text as={"span"} color={"brand.600"} fontWeight={"md"} ml={"10px"} fontSize={"xxs"} >Click Here</Text></Link>
+                    </Text>
                 </VStack>
-                <VStack alignItems={"flex-start"} w={"100%"} m={"10px 0px"}>
-                    <Heading color={"text.200"} fontWeight={"regular"} fontSize={"xxs"}>Creater Password :</Heading>
-                    <Input placeholder="*********" _placeholder={{ color: "text.300", fontWeight: "regular", fontSize: "xs" }} fontWeight={"regular"} fontSize={"xs"} color={"text.300"} w={"100%"} type="password" {...register('password', { required: true })} />
-                    <Text fontSize={"xxs"} fontWeight={"regular"} color={"error.500"}>{errors.password == null ? "" : errors.password.message}</Text>
-                </VStack>
-                {
-                    !isLoading ? <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} type='submit'>
-                        Log In
-                    </Button> : <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} type='submit'>
-                        Log In
-                        <Oval height="30"
-                            width="30"
-                            color='#262425'
-                            secondaryColor="#363435"
-                            wrapperStyle={{marginLeft:"5px"}}
-                            strokeWidth={3}
-                            ariaLabel="three-dots-loading"
-                            visible={true} />
-                    </Button>
-                }
-                <Text m={'0px auto'} color={"text.400"} fontSize={"xxs"}>
-                    Don't have an account ?
-                    <Link to={"/sign-up"}>
-                        <Text as={"span"} color={"brand.600"} fontWeight={"md"} ml={"10px"} fontSize={"xxs"} >Click Here</Text></Link>
-                </Text>
-            </VStack>
-        </VStack>
+            </VStack> : <Navigate to={"/"} />
+        }
         </>
     )
 }
