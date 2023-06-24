@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { signupDataInterface, signupSchema } from '../Interface/formSchema.ts';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useLoginMutation } from "../Features/auth/logInSlice.ts";
+import { useSignupMutation } from "../Features/auth/signUpSlice.ts";
 import { setTokenCookie } from "../helper/cookiee.ts";
 
 
@@ -14,7 +14,7 @@ interface Props {
 
 let SignUpPage: FC<Props> = ({ }) => {
 
-    const [login, { isLoading }] = useLoginMutation();
+    const [signUp, { isLoading }] = useSignupMutation();
     const toast = useToast();
 
     const { register, formState: { errors }, handleSubmit } = useForm<signupDataInterface>({
@@ -22,11 +22,11 @@ let SignUpPage: FC<Props> = ({ }) => {
     });
 
     const onSubmit = handleSubmit(async (data) => {
-        const res = await login(data).unwrap();
+        const res = await signUp(data).unwrap();
         if (res.token) {
             toast({
-                title: "Logged In",
-                description: "Login successfully",
+                title: "Sign Up",
+                description: "Sign Up successfully",
                 duration: 5000,
                 isClosable: true,
                 status: 'success',
@@ -36,7 +36,7 @@ let SignUpPage: FC<Props> = ({ }) => {
             setTokenCookie(res.token);
         } else if (res.message) {
             toast({
-                title: "Log in failed",
+                title: "Sign Up failed",
                 description: res.message,
                 duration: 5000,
                 isClosable: true,
@@ -46,7 +46,7 @@ let SignUpPage: FC<Props> = ({ }) => {
             });
         } else {
             toast({
-                title: "Log in failed",
+                title: "Sign Up failed",
                 description: "Error",
                 duration: 5000,
                 isClosable: true,
@@ -65,8 +65,8 @@ let SignUpPage: FC<Props> = ({ }) => {
                 <Heading color={"text.300"} fontWeight={"medium"} fontSize={"sm"}>Be a Creater</Heading>
                 <VStack alignItems={"flex-start"} w={"100%"}>
                     <Heading color={"text.200"} fontWeight={"regular"} fontSize={"xxs"}>Creater Name :</Heading>
-                    <Input placeholder="creater@gmail.com" _placeholder={{ color: "text.300", fontWeight: "regular", fontSize: "xs" }} fontWeight={"regular"} fontSize={"xs"} color={"text.300"} w={"100%"} type="text" {...register('name', { required: true })} />
-                    <Text fontSize={"xxs"} fontWeight={"regular"} color={"error.500"}>{errors.email == null ? "" : errors.email.message}</Text>
+                    <Input placeholder="Creater" _placeholder={{ color: "text.300", fontWeight: "regular", fontSize: "xs" }} fontWeight={"regular"} fontSize={"xs"} color={"text.300"} w={"100%"} type="text" {...register('name', { required: true })} />
+                    <Text fontSize={"xxs"} fontWeight={"regular"} color={"error.500"}>{errors.name == null ? "" : errors.name.message}</Text>
                 </VStack>
                 <VStack alignItems={"flex-start"} w={"100%"}>
                     <Heading color={"text.200"} fontWeight={"regular"} fontSize={"xxs"}>Creater Email :</Heading>
@@ -81,7 +81,7 @@ let SignUpPage: FC<Props> = ({ }) => {
                 <VStack alignItems={"flex-start"} w={"100%"}>
                     <Heading color={"text.200"} fontWeight={"regular"} fontSize={"xxs"}>Repeat Password :</Heading>
                     <Input placeholder="*********" _placeholder={{ color: "text.300", fontWeight: "regular", fontSize: "xs" }} fontWeight={"regular"} fontSize={"xs"} color={"text.300"} w={"100%"} type="password" {...register('repeatPassword', { required: true })} />
-                    <Text fontSize={"xxs"} fontWeight={"regular"} color={"error.500"}>{errors.email == null ? "" : errors.email.message}</Text>
+                    <Text fontSize={"xxs"} fontWeight={"regular"} color={"error.500"}>{errors.repeatPassword == null ? "" : errors.repeatPassword.message}</Text>
                 </VStack>
                 {
                     !isLoading ? <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} type='submit'>
