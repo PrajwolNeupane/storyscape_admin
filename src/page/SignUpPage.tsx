@@ -1,4 +1,4 @@
-import { Button, Input, Heading, VStack, Text, useToast } from "@chakra-ui/react";
+import { Button, Input, Heading, VStack, Text, useToast ,useDisclosure} from "@chakra-ui/react";
 import { FC } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -6,6 +6,7 @@ import { signupDataInterface, signupSchema } from '../Interface/formSchema.ts';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useSignupMutation } from "../Features/auth/signUpSlice.ts";
 import { setTokenCookie } from "../helper/cookiee.ts";
+import LinkUserModal from "../components/LinkUserModal.tsx";
 
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 let SignUpPage: FC<Props> = ({ }) => {
 
     const [signUp, { isLoading }] = useSignupMutation();
+    const { isOpen, onOpen, onClose } = useDisclosure()
     const toast = useToast();
 
     const { register, formState: { errors }, handleSubmit } = useForm<signupDataInterface>({
@@ -88,6 +90,9 @@ let SignUpPage: FC<Props> = ({ }) => {
                         Log In
                     </Button> : <Text>Loading</Text>
                 }
+                <Button p={"0px 0px"} fontSize={"xs"} w={"100%"} bgColor={"brand.500"} _hover={{bgColor:"brand.700"}} onClick={onOpen}>
+                    Link Storyscape Account
+                </Button>
                 <Text m={'0px auto'} color={"text.400"} fontSize={"xxs"}>
                     Have an account ?
                     <Link to={"/log-in"}>
@@ -95,6 +100,7 @@ let SignUpPage: FC<Props> = ({ }) => {
                 </Text>
             </VStack>
         </VStack>
+        <LinkUserModal isOpen={isOpen} onClose={onClose}/>
         </>
     )
 }
