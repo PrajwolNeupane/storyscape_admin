@@ -6,6 +6,8 @@ import { loginDataInterface, loginSchema } from '../Interface/formSchema.ts';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useLoginMutation } from "../Features/auth/logInSlice.ts";
 import { setTokenCookie } from "../helper/cookiee.ts";
+import { useAppDispatch } from "../app/store.ts";
+import { setToken } from "../app/reducer/tokenReducer.ts";
 
 
 interface Props {
@@ -16,6 +18,7 @@ let LogInPage: FC<Props> = ({ }) => {
 
     const [login, { isLoading }] = useLoginMutation();
     const toast = useToast();
+    const dispatch = useAppDispatch();
 
     const { register, formState: { errors }, handleSubmit } = useForm<loginDataInterface>({
         resolver: yupResolver(loginSchema)
@@ -34,6 +37,7 @@ let LogInPage: FC<Props> = ({ }) => {
 
             });
             setTokenCookie(res.token);
+            dispatch(setToken(res.token));
         } else if (res.message) {
             toast({
                 title: "Log in failed",

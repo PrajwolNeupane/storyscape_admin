@@ -3,8 +3,19 @@ import LogInPage from "./page/LogInPage"
 import ProtectiveLayout from "./Layout/ProtectiveLayout"
 import Dashboard from "./page/Dashboard"
 import SignUpPage from "./page/SignUpPage"
+import { useEffect } from 'react';
+import { useAppDispatch } from "./app/store"
+import { setToken } from "./app/reducer/tokenReducer"
+import { getCookie } from "./helper/cookiee"
+
 
 function App() {
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setToken(getCookie("token")));
+  }, []);
 
   return (
     <Routes>

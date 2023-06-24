@@ -1,12 +1,17 @@
 import { Avatar, Button, HStack, Heading, VStack, Text, Box, Table, Td, Th, Tr } from "@chakra-ui/react";
 import { FC } from "react";
 import { Link } from "react-router-dom";
+import { deleteTokenCookie } from "../helper/cookiee";
+import { useAppDispatch } from "../app/store";
+import { setToken } from "../app/reducer/tokenReducer";
 
 interface Props {
 
 }
 
 let Dashboard: FC<Props> = ({ }) => {
+
+    const dispatch = useAppDispatch();
 
     const data = [
         {
@@ -58,7 +63,10 @@ let Dashboard: FC<Props> = ({ }) => {
                 <VStack alignItems={"start"}>
                     <Heading fontWeight={"semibold"} fontSize={"sm"} color={"text.300"}>Prajwol Neupane</Heading>
                     <Heading fontWeight={"medium"} fontSize={"xs"} color={"text.300"}>prajwolneupane68@gmail.com</Heading>
-                    <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"text.300"} _hover={{ bgColor: "text.200" }}>Log Out</Button>
+                    <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"text.300"} _hover={{ bgColor: "text.200" }} onClick={() => {
+                        deleteTokenCookie();
+                        dispatch(setToken(null));
+                    }}>Log Out</Button>
                 </VStack>
             </HStack>
             <HStack justifyContent={"space-between"} w={"80%"} margin={"0px auto"}>

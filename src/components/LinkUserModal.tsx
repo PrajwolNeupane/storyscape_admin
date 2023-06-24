@@ -5,6 +5,8 @@ import { loginDataInterface, loginSchema } from '../Interface/formSchema.ts';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { setTokenCookie } from "../helper/cookiee.ts";
 import { useLinkUserMutation } from '../Features/auth/linkUserSlice.ts';
+import { setToken } from '../app/reducer/tokenReducer.ts';
+import { useAppDispatch } from '../app/store.ts';
 
 interface Props {
     isOpen: boolean,
@@ -15,6 +17,7 @@ let LinkUserModal: FC<Props> = ({ isOpen, onClose }) => {
 
     const [linkUser, { isLoading }] = useLinkUserMutation();
     const toast = useToast();
+    const dispatch = useAppDispatch();
 
     const { register, formState: { errors }, handleSubmit } = useForm<loginDataInterface>({
         resolver: yupResolver(loginSchema)
@@ -33,6 +36,7 @@ let LinkUserModal: FC<Props> = ({ isOpen, onClose }) => {
 
             });
             setTokenCookie(res.token);
+            dispatch(setToken(res.token));
         } else if (res.message) {
             toast({
                 title: "Log in failed",

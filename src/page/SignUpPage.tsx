@@ -7,6 +7,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useSignupMutation } from "../Features/auth/signUpSlice.ts";
 import { setTokenCookie } from "../helper/cookiee.ts";
 import LinkUserModal from "../components/LinkUserModal.tsx";
+import { useAppDispatch } from "../app/store.ts";
+import { setToken } from "../app/reducer/tokenReducer.ts";
 
 
 interface Props {
@@ -18,6 +20,7 @@ let SignUpPage: FC<Props> = ({ }) => {
     const [signUp, { isLoading }] = useSignupMutation();
     const { isOpen, onOpen, onClose } = useDisclosure()
     const toast = useToast();
+    const dispatch = useAppDispatch();
 
     const { register, formState: { errors }, handleSubmit } = useForm<signupDataInterface>({
         resolver: yupResolver(signupSchema)
@@ -36,6 +39,7 @@ let SignUpPage: FC<Props> = ({ }) => {
 
             });
             setTokenCookie(res.token);
+            dispatch(setToken(res.token));
         } else if (res.message) {
             toast({
                 title: "Sign Up failed",
