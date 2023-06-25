@@ -33,7 +33,7 @@ let SideDrawer: FC<Props> = ({ }) => {
 
     return (
         <>
-            <HStack bgColor={"dark.700"} padding={"20px 2%"} gap={"5%"} alignItems={'center'}>
+            <HStack bgColor={"dark.700"} padding={"20px 2%"} gap={"5%"} alignItems={'center'} position={'sticky'} top={'0px'} zIndex={1}>
                 <HamburgerIcon onClick={onOpen} color={"text.100"} fontSize={"xl"} cursor={"pointer"} />
                 <Heading fontWeight={"semibold"} fontSize={"md"} color={"text.200"}>Creater Panel</Heading>
             </HStack>
