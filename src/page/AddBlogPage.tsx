@@ -1,13 +1,30 @@
-import { Button, HStack, VStack, Box, Image } from "@chakra-ui/react";
+import { Button, HStack, VStack, Box, Image, FormControl, FormLabel, Select, Text } from "@chakra-ui/react";
 import { FC, useState } from "react";
 
 interface Props {
 
 }
 
+const tags = [
+    "Websites",
+    "Mobile App",
+    "Graphic Design",
+    "UI / UX Design",
+    "Internet of Things",
+    "Technology",
+    "Artificial Intelligence",
+    "AI and Machine Learning",
+    "Database",
+    "Networking"
+];
+
 let AddBlogPage: FC<Props> = ({ }) => {
 
     const [data, setData] = useState<Array<{ image: null | string, description: null | string }> | null>(null);
+    const [title, setTitle] = useState<string | null>("Title");
+    const [selectedTag, setSelectedTag] = useState<string | null>(null);
+
+
 
     const addImage = () => {
         if (data) {
@@ -28,12 +45,27 @@ let AddBlogPage: FC<Props> = ({ }) => {
         <>
             <VStack minHeight={"89.2vh"} bgColor={'dark.600'} alignItems={"center"} p="20px 10%" gap={"30px"}>
                 <VStack position={'sticky'} top={"75px"} w={'100%'} bgColor={'dark.600'} pb={"20px"} zIndex={'1'}>
-                    <Box contentEditable w={"100%"} fontSize={"50px"} color={"text.400"} border={"0px"} _focus={{ outline: "none" }} textAlign={"center"} fontWeight={"semibold"} >Title</Box>
+                    <Box contentEditable w={"100%"} fontSize={"50px"} color={"text.400"} border={"0px"} _focus={{ outline: "none" }} textAlign={"center"} fontWeight={"semibold"} onInput={(e) => {
+                        setTitle((e.target as HTMLDivElement).textContent);
+                    }}>{title}</Box>
                     <HStack margin={'0px auto'} >
                         <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"text.300"} _hover={{ bgColor: "text.200" }} onClick={addImage}>Add Image</Button>
                         <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"text.300"} _hover={{ bgColor: "text.200" }} onClick={addParagraphs}>Add Paragraph</Button>
                     </HStack>
                 </VStack>
+                <FormControl w={"400px"}>
+                    <FormLabel fontWeight={"medium"} fontSize={"sm"} color={'text.200'} >Tag</FormLabel>
+                    <Select rounded={'md'} fontSize={"xs"} fontWeight={"medium"} color={"text.200"} bg={'dark.600'} onChange={(e)=>{
+                        setSelectedTag(e.target.value);
+                    }}>
+                        {
+                            tags.map((curr, indx) => (
+                                <Text as="option" key={indx} value={curr} color={"text.200"} style={{ background: "#363435" }}>{curr}</Text>
+
+                            ))
+                        }
+                    </Select>
+                </FormControl>
                 {
                     data?.map((curr, indx) => {
                         if (curr.image) {
@@ -76,7 +108,11 @@ let AddBlogPage: FC<Props> = ({ }) => {
                     })
                 }
                 <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"success.700"} _hover={{ bgColor: "success.900" }} color={"text.100"} onClick={() => {
-                    console.log(data);
+                    console.log({
+                        title:title,
+                        selectedTag:selectedTag,
+                        data:data
+                    });
                 }}>Post Blog</Button>
 
             </VStack>
