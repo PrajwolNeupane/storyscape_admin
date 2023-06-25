@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { useAppDispatch } from "./app/store"
 import { setToken } from "./app/reducer/tokenReducer"
 import { getCookie } from "./helper/cookiee"
+import AddBlogPage from "./page/AddBlogPage"
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
     <Routes>
       <Route element={<ProtectiveLayout />}>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/add" element={<AddBlogPage />} />
       </Route>
       <Route path="/log-in" element={<LogInPage />} />
       <Route path="/sign-up" element={<SignUpPage />} />

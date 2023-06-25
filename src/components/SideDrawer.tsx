@@ -55,7 +55,8 @@ let SideDrawer: FC<Props> = ({ }) => {
                             <Heading fontSize={"sm"} fontWeight={"semibold"} color={"text.300"}>Dashboard</Heading>
                         </Link>
                         <Divider borderColor={"text.500"} />
-                        <Heading fontSize={"sm"} fontWeight={"semibold"} color={"text.300"}>Add Blog</Heading>
+                        <Link to={"/add"}>
+                            <Heading fontSize={"sm"} fontWeight={"semibold"} color={"text.300"}>Add Blog</Heading></Link>
                         <Divider borderColor={"text.500"} />
                         <Heading fontSize={"sm"} fontWeight={"semibold"} cursor={"pointer"} color={"text.300"} onClick={() => {
                             deleteTokenCookie();

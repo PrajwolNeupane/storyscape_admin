@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../app/store";
 import { setToken } from "../app/reducer/tokenReducer";
 import { setAuth } from "../app/reducer/authReducer";
 
+
 interface Props {
 
 }
@@ -13,7 +14,7 @@ interface Props {
 let Dashboard: FC<Props> = ({ }) => {
 
     const dispatch = useAppDispatch();
-    const {auth} = useAppSelector((state) => state.Auth);
+    const { auth } = useAppSelector((state) => state.Auth);
 
     const data = [
         {
@@ -58,7 +59,9 @@ let Dashboard: FC<Props> = ({ }) => {
         }
     ]
 
+
     return (
+
         <VStack bgColor={'dark.600'} p={"40px 5%"} alignItems={"flex-start"} gap={"40px"}>
             <HStack gap={"60px"} justifyContent={"flex-start"}>
                 <Avatar src={auth?.photoURL} bgColor={"text.200"} width={"180px"} height={"180px"} />
@@ -148,6 +151,8 @@ let Dashboard: FC<Props> = ({ }) => {
                 }
             </Table>
         </VStack>
+
+
     )
 }
 export default Dashboard;
