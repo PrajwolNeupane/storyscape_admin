@@ -1,5 +1,7 @@
 import { Button, HStack, VStack, Box, Image, FormControl, FormLabel, Select, Text } from "@chakra-ui/react";
 import { FC, useState } from "react";
+import { useAppSelector } from "../app/store";
+import { usePostBlogMutation } from "../Features/auth/postBlogSlice";
 
 interface Props {
 
@@ -20,9 +22,12 @@ const tags = [
 
 let AddBlogPage: FC<Props> = ({ }) => {
 
-    const [data, setData] = useState<Array<{ image: null | string, description: null | string }> | null>(null);
+    const [data, setData] = useState<Array<{ image: null | File | string, description: null | string }> | null>(null);
     const [title, setTitle] = useState<string | null>("Title");
-    const [selectedTag, setSelectedTag] = useState<string | null>(null);
+    const [selectedTag, setSelectedTag] = useState<string>('Websites');
+    const [postBlog] = usePostBlogMutation();
+
+    const { token } = useAppSelector((state) => state.Token);
 
 
 
@@ -41,13 +46,36 @@ let AddBlogPage: FC<Props> = ({ }) => {
         }
     }
 
+    const onSubmmit = async () => {
+        const formData = new FormData();
+        data?.forEach(element => {
+            if (element.image) {
+                formData.append('images', element.image);
+            } else if (element.description) {
+                formData.append('paragraphs', element.description);
+            }
+        });
+        if (token) {
+            formData.append('token', token);
+        }
+        formData.append('tag', selectedTag);
+        if (title) {
+            formData.append('title', title);
+        }
+        const res = await postBlog(Object.fromEntries(formData)).unwrap();
+        console.log(res);
+        const convertedFormData = Object.fromEntries(formData);
+        console.log(convertedFormData);
+        console.log(title);
+    }
+
     return (
         <>
             <VStack minHeight={"89.2vh"} bgColor={'dark.600'} alignItems={"center"} p="20px 10%" gap={"30px"}>
                 <VStack position={'sticky'} top={"75px"} w={'100%'} bgColor={'dark.600'} pb={"20px"} zIndex={'1'}>
                     <Box contentEditable w={"100%"} fontSize={"50px"} color={"text.400"} border={"0px"} _focus={{ outline: "none" }} textAlign={"center"} fontWeight={"semibold"} onInput={(e) => {
                         setTitle((e.target as HTMLDivElement).textContent);
-                    }}>{title}</Box>
+                    }}>{'Title'}</Box>
                     <HStack margin={'0px auto'} >
                         <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"text.300"} _hover={{ bgColor: "text.200" }} onClick={addImage}>Add Image</Button>
                         <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"text.300"} _hover={{ bgColor: "text.200" }} onClick={addParagraphs}>Add Paragraph</Button>
@@ -55,7 +83,7 @@ let AddBlogPage: FC<Props> = ({ }) => {
                 </VStack>
                 <FormControl w={"400px"}>
                     <FormLabel fontWeight={"medium"} fontSize={"sm"} color={'text.200'} >Tag</FormLabel>
-                    <Select rounded={'md'} fontSize={"xs"} fontWeight={"medium"} color={"text.200"} bg={'dark.600'} onChange={(e)=>{
+                    <Select rounded={'md'} fontSize={"xs"} fontWeight={"medium"} color={"text.200"} bg={'dark.600'} onChange={(e) => {
                         setSelectedTag(e.target.value);
                     }}>
                         {
@@ -67,6 +95,7 @@ let AddBlogPage: FC<Props> = ({ }) => {
                     </Select>
                 </FormControl>
                 {
+                    //URL.createObjectURL
                     data?.map((curr, indx) => {
                         if (curr.image) {
                             return (<HStack w={"100%"} justifyContent={'space-between'} alignItems={'flex-start'}>
@@ -74,13 +103,13 @@ let AddBlogPage: FC<Props> = ({ }) => {
                                     if (e?.target.files) {
                                         const updatedData = [...data];
                                         updatedData[indx] = {
-                                            image: URL.createObjectURL(e.target.files[0]),
+                                            image: e.target.files[0],
                                             description: null
                                         }
                                         setData(updatedData);
                                     }
                                 }} />
-                                <Image key={indx} src={curr.image} w={"100%"} height={"400px"} objectFit={"contain"} />
+                                <Image key={indx} src={typeof curr.image == 'string' ? curr.image : URL.createObjectURL(curr.image)} w={"100%"} height={"400px"} objectFit={"contain"} />
                                 <VStack alignItems={'flex-stretch'}>
                                     <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"error.500"} _hover={{ bgColor: "error.700" }} color={"text.100"} onClick={() => {
                                         document.getElementById(indx + '-image')?.click();
@@ -108,11 +137,7 @@ let AddBlogPage: FC<Props> = ({ }) => {
                     })
                 }
                 <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"success.700"} _hover={{ bgColor: "success.900" }} color={"text.100"} onClick={() => {
-                    console.log({
-                        title:title,
-                        selectedTag:selectedTag,
-                        data:data
-                    });
+                    onSubmmit();
                 }}>Post Blog</Button>
 
             </VStack>
