@@ -46,27 +46,38 @@ let AddBlogPage: FC<Props> = ({ }) => {
         }
     }
 
-    const onSubmmit = async () => {
+    const onSubmit = async () => {
         const formData = new FormData();
-        data?.forEach(element => {
+        const paragraphsData: Array<any> = [];
+        const imageData: Array<any> = [];
+        var imageCount = 0;
+        data?.forEach((element, indx) => {
             if (element.image) {
-                formData.append('images', element.image);
+                formData.append(`images[${imageCount}]`, element.image); // Append each image with a unique key
+                imageCount = imageCount + 1;
+                imageData.push(element.image);
+                imageCount = imageCount + 1;
             } else if (element.description) {
-                formData.append('paragraphs', element.description);
+                paragraphsData.push({ paragraph: element.description, indx: indx });
             }
         });
         if (token) {
-            formData.append('token', token);
+            formData.set("token", token);
         }
-        formData.append('tag', selectedTag);
+        if (imageData.length > 0) {
+            formData.append("images", JSON.stringify(imageData)); // Append the array of image data
+        }
+        if (paragraphsData) {
+            formData.append("paragraphs", JSON.stringify(paragraphsData));
+        }
+        formData.append("tag", selectedTag);
         if (title) {
-            formData.append('title', title);
+            formData.append("title", title);
         }
         const res = await postBlog(Object.fromEntries(formData)).unwrap();
         console.log(res);
-        const convertedFormData = Object.fromEntries(formData);
-        console.log(convertedFormData);
-        console.log(title);
+        // const convertedFormData = Object.fromEntries(formData);
+        // console.log(convertedFormData);
     }
 
     return (
@@ -95,7 +106,6 @@ let AddBlogPage: FC<Props> = ({ }) => {
                     </Select>
                 </FormControl>
                 {
-                    //URL.createObjectURL
                     data?.map((curr, indx) => {
                         if (curr.image) {
                             return (<HStack w={"100%"} justifyContent={'space-between'} alignItems={'flex-start'}>
@@ -137,7 +147,7 @@ let AddBlogPage: FC<Props> = ({ }) => {
                     })
                 }
                 <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"success.700"} _hover={{ bgColor: "success.900" }} color={"text.100"} onClick={() => {
-                    onSubmmit();
+                    onSubmit();
                 }}>Post Blog</Button>
 
             </VStack>
