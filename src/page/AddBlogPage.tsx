@@ -12,7 +12,7 @@ const tags = [
     "Websites",
     "Mobile App",
     "Graphic Design",
-    "UI / UX Design",
+    "UI UX Design",
     "Internet of Things",
     "Technology",
     "Artificial Intelligence",
