@@ -1,7 +1,8 @@
-import { Button, HStack, VStack, Box, Image, FormControl, FormLabel, Select, Text } from "@chakra-ui/react";
+import { Button, HStack, VStack, Box, Image, FormControl, FormLabel, Select, Text,useToast } from "@chakra-ui/react";
 import { FC, useState } from "react";
 import { useAppSelector } from "../app/store";
 import { usePostBlogMutation } from "../Features/auth/postBlogSlice";
+import { ClipLoader } from "react-spinners";
 
 interface Props {
 
@@ -25,7 +26,8 @@ let AddBlogPage: FC<Props> = ({ }) => {
     const [data, setData] = useState<Array<{ image: null | File | string, description: null | string }> | null>(null);
     const [title, setTitle] = useState<string | null>("Title");
     const [selectedTag, setSelectedTag] = useState<string>('Websites');
-    const [postBlog] = usePostBlogMutation();
+    const [postBlog, { isLoading }] = usePostBlogMutation();
+    const toast = useToast();
 
     const { token } = useAppSelector((state) => state.Token);
 
@@ -49,11 +51,11 @@ let AddBlogPage: FC<Props> = ({ }) => {
     const onSubmit = async () => {
         const formData = new FormData();
         const paragraphsData: Array<any> = [];
-        const imageData: Array<any> = [];
+        const imageData: Array<File | string> = [];
         var imageCount = 0;
         data?.forEach((element, indx) => {
             if (element.image) {
-                formData.append(`images[${imageCount}]`, element.image); // Append each image with a unique key
+                // formData.append(`images`, element.image);
                 imageCount = imageCount + 1;
                 imageData.push(element.image);
                 imageCount = imageCount + 1;
@@ -65,7 +67,11 @@ let AddBlogPage: FC<Props> = ({ }) => {
             formData.set("token", token);
         }
         if (imageData.length > 0) {
-            formData.append("images", JSON.stringify(imageData)); // Append the array of image data
+            // imageData.forEach((image, index) => {
+            //     formData.append(`image-${index}`, image);
+            //   });
+            console.log(imageData)
+            formData.append('images', imageData[0]);
         }
         if (paragraphsData) {
             formData.append("paragraphs", JSON.stringify(paragraphsData));
@@ -75,9 +81,19 @@ let AddBlogPage: FC<Props> = ({ }) => {
             formData.append("title", title);
         }
         const res = await postBlog(Object.fromEntries(formData)).unwrap();
-        console.log(res);
-        // const convertedFormData = Object.fromEntries(formData);
-        // console.log(convertedFormData);
+        if(res.blog){
+            setData(null);
+            setTitle(null);
+            toast({
+                title: "Blog Added",
+                description: "Blog Added Sucesfully",
+                duration: 5000,
+                isClosable: true,
+                status: 'success',
+                position: 'bottom-right',
+
+            });
+        }
     }
 
     return (
@@ -146,9 +162,11 @@ let AddBlogPage: FC<Props> = ({ }) => {
                         }
                     })
                 }
-                <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"success.700"} _hover={{ bgColor: "success.900" }} color={"text.100"} onClick={() => {
-                    onSubmit();
-                }}>Post Blog</Button>
+                {
+                    isLoading ? <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"brand.400"} _hover={{ bgColor: "brand.600" }} color={"dark.100"} as={HStack} cursor={'pointer'}>Post Blog <ClipLoader color="black" size={'25px'}/></Button> : <Button p={"0px 20px"} fontWeight={"medium"} fontSize={"xs"} bgColor={"brand.400"} _hover={{ bgColor: "brand.700" }} color={"dark.100"} onClick={() => {
+                        onSubmit();
+                    }}>Post Blog</Button>
+                }
 
             </VStack>
         </>
